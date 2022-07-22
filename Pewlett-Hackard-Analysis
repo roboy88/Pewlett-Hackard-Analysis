@@ -1,0 +1,480 @@
+ons and 0 deletions.
+Filter changed files
+ 10  
+Data/current_emp_dept.csv
+@@ -0,0 +1,10 @@
+dept_no,emp_count
+d001,2199
+d002,1908
+d003,1953
+d004,8174
+d005,9281
+d006,2234
+d007,5860
+d008,2413
+d009,2597
+ 1,550  
+Data/mentorship_eligibilty.csv
+Large diffs are not rendered by default.
+
+ 133,777  
+Data/retirement_titles.csv
+Large diffs are not rendered by default.
+
+ 8  
+Data/retiring_titles.csv
+@@ -0,0 +1,8 @@
+title,cnt
+Senior Engineer,25916
+Senior Staff,24926
+Engineer,9285
+Staff,7636
+Technique Leader,3603
+Assistant Engineer,1090
+Manager,2
+ 72,459  
+Data/unique_titles.csv
+Large diffs are not rendered by default.
+
+ 42  
+Queries/Creating_Tables.sql
+@@ -0,0 +1,42 @@
+Create table cities(
+	id serial primary key,
+	city varchar(30) not null,
+	state varchar(30) not null,
+	population int 
+);
+
+-- Insert data into the table
+INSERT INTO cities (city, state, population)
+VALUES ('Alameda', 'California', 79177),
+  ('Mesa', 'Arizona', 496401),
+  ('Boerne', 'Texas', 16056),
+  ('Boerne', 'Texas', 16056),
+  ('Anaheim', 'Texas', 352497),
+  ('Tucson', 'Arizona', 535677),
+  ('Garland', 'Texas', 238002);
+
+
+  Select * from cities;
+
+  SELECT city, state
+FROM cities
+WHERE upper(state) = 'TEXAS';
+
+
+SELECT *
+FROM cities
+WHERE population < 100000;
+
+
+SELECT *
+FROM cities
+WHERE population < 100000
+AND state = 'California';
+
+
+UPDATE cities
+SET state = 'California'
+WHERE city = 'Anaheim';
+
+DELETE FROM cities
+WHERE id = 4; 
+ 10  
+Queries/Employee_Challenge_starter_code.sql
+@@ -0,0 +1,10 @@
+-- Use Dictinct with Orderby to remove duplicate rows
+SELECT DISTINCT ON (______) _____,
+______,
+______,
+______
+
+INTO nameyourtable
+FROM _______
+WHERE _______
+ORDER BY _____, _____ DESC;
+ 90  
+Queries/Employee_Database_challenge.sql
+@@ -0,0 +1,90 @@
+SELECT 	*
+  FROM employees where emp_no = 10663;
+
+SELECT 	* 
+  FROM dept_emp where emp_no = 33722;
+
+SELECT 	*  
+  FROM titles;
+
+---- **** DELIVERABEL 1 **** ----  
+--drop the table if already exists.
+DROP TABLE retirement_titles;
+
+--Retrieve the emp_no, first_name, and last_name columns from the Employees table.
+--Retrieve the title, from_date, and to_date columns from the Titles table.
+--Create a new table using the INTO clause.
+--Join both tables on the primary key.
+--Filter the data on the birth_date column to retrieve the employees who were born between 1952 and 1955. Then, order by the employee number..
+SELECT  a.emp_no,
+		a.first_name,
+		a.last_name,
+		b.title,
+		b.from_date,
+		b.to_date
+  INTO	retirement_titles
+  FROM	employees a
+  JOIN	titles b
+    ON	a.emp_no = b.emp_no
+ WHERE	a.birth_date BETWEEN '1952-01-01' AND '1955-12-31'
+ ORDER BY a.emp_no;
+
+--drop the table if already exists.
+DROP TABLE unique_titles;
+
+--Use Distinct with Orderby to remove duplicate rows
+--Exclude those employees that have already left the company by filtering on to_date to keep only those dates that are equal to '9999-01-01'.
+--Sort the Unique Titles table in ascending order by the employee number and descending order by the last date (i.e., to_date) of the most recent title.
+SELECT	DISTINCT ON (emp_no)
+		emp_no,
+		first_name,
+		last_name,
+		title
+  INTO unique_titles
+  FROM	retirement_titles
+ WHERE	to_date = '9999-01-01' 
+ ORDER BY emp_no,
+ 		  from_date DESC;
+
+--Query to retrieve the number of employees by their most recent job title who are about to retire.
+--First, retrieve the number of titles from the Unique Titles table.
+--Then, create a Retiring Titles table to hold the required information.
+--Group the table by title, then sort the count column in descending order.
+SELECT	title, COUNT(*) as cnt
+  --INTO	retiring_titles
+  FROM	unique_titles
+ GROUP BY title
+ ORDER BY cnt DESC;
+
+---- **** DELIVERABEL 2 **** ----  
+
+--Retrieve the emp_no, first_name, and last_name columns from the Employees table.
+--Retrieve from_date, and to_date columns from the Department Employees table.
+--Retrieve the title column from the Titles table.
+--Use a DISTINCT ON statement to retrieve the first occurrence of the employee number for each set of rows defined by the ON () clause.
+--Create a new table using the INTO clause.
+--Join the Employees and the Department Employee tables on the primary key.
+--Filter the data on the to_date column to all the current employees, 
+--then filter the data on the birth_date columns to get all the employees whose birth dates are between January 1, 1965 and December 31, 1965.
+--Order the table by the employee number.
+--drop the table if already exists.
+DROP TABLE mentorship_eligibilty;
+
+SELECT  DISTINCT ON(a.emp_no)
+		a.emp_no,
+		a.first_name,
+		a.last_name,
+		b.from_date,
+		b.to_date,
+		c.title
+  INTO	mentorship_eligibilty
+  FROM	employees a
+  JOIN	dept_emp b
+  	ON	a.emp_no = b.emp_no
+  JOIN	titles c
+    ON	b.emp_no = c.emp_no
+ WHERE	b.to_date = '9999-01-01'
+   AND	c.to_date = '9999-01-01'
+   AND	a.birth_date BETWEEN '1965-01-01' AND '1965-12-31'
+ ORDER BY a.emp_no;
+
+ 13  
+Queries/Hide_and_Seek.sql
+@@ -0,0 +1,13 @@
+Create table wordassociation(
+	author int not null,
+	word1 varchar(200) not null,
+	word2 varchar(200) not null,
+	source char(2) not null
+);
+
+
+Select * from wordassociation Where word1 = 'stone';
+Select * from wordassociation Where author between 0 and 10;
+Select * from wordassociation Where (word1 like '%pie%' or word2 like '%pie%');
+Select * from wordassociation Where source = 'BC';
+Select * from wordassociation Where source = 'BC' and author between 333 and 335; 
+ 13  
+Queries/Importing_Data.sql
+@@ -0,0 +1,13 @@
+-- Drop table if exists
+DROP TABLE bird_song;
+
+-- Create new table
+CREATE TABLE bird_song (
+	english_name VARCHAR,
+	country VARCHAR,
+	latitude DEC,
+	longitude DEC
+);
+
+
+SELECT * FROM bird_song; 
+  171  
+Queries/Queries.sql
+@@ -86,3 +86,174 @@ AND (hire_date BETWEEN '1985-01-01' AND '1988-12-31');
+
+
+SELECT * FROM retirement_info;
+--DROP TABLE retirement_info;
+-- Create new table for retiring employees
+SELECT emp_no, first_name, last_name
+INTO retirement_info
+FROM employees
+WHERE (birth_date BETWEEN '1952-01-01' AND '1955-12-31')
+AND (hire_date BETWEEN '1985-01-01' AND '1988-12-31');
+-- Check the table
+SELECT * FROM retirement_info;
+
+-- Joining departments and dept_manager tables
+SELECT departments.dept_name,
+     dept_manager.emp_no,
+     dept_manager.from_date,
+     dept_manager.to_date
+FROM departments
+INNER JOIN dept_manager
+ON departments.dept_no = dept_manager.dept_no;
+
+-- Joining retirement_info and dept_emp tables
+SELECT retirement_info.emp_no,
+    retirement_info.first_name,
+retirement_info.last_name,
+    dept_emp.to_date
+	FROM retirement_info
+	LEFT JOIN dept_emp
+	ON retirement_info.emp_no = dept_emp.emp_no;
+
+SELECT ri.emp_no,
+    ri.first_name,
+ri.last_name,
+    de.to_date
+	FROM retirement_info as ri
+LEFT JOIN dept_emp as de
+ON ri.emp_no = de.emp_no;
+
+
+-- Joining departments and dept_manager tables
+SELECT departments.dept_name,
+     dept_manager.emp_no,
+     dept_manager.from_date,
+     dept_manager.to_date
+FROM departments
+INNER JOIN dept_manager
+ON departments.dept_no = dept_manager.dept_no;
+
+SELECT d.dept_name,
+     dm.emp_no,
+     dm.from_date,
+     dm.to_date
+	 FROM departments as d
+INNER JOIN dept_manager as dm
+ON d.dept_no = dm.dept_no;
+
+SELECT ri.emp_no,
+    ri.first_name,
+    ri.last_name,
+de.to_date
+INTO current_emp
+FROM retirement_info as ri
+LEFT JOIN dept_emp as de
+ON ri.emp_no = de.emp_no
+WHERE de.to_date = ('9999-01-01');
+
+
+Select * from current_emp;
+
+SELECT COUNT(ce.emp_no), de.dept_no
+FROM current_emp as ce
+LEFT JOIN dept_emp as de
+ON ce.emp_no = de.emp_no
+GROUP BY de.dept_no;
+
+
+-- Employee count by department number
+SELECT COUNT(ce.emp_no), de.dept_no
+FROM current_emp as ce
+LEFT JOIN dept_emp as de
+ON ce.emp_no = de.emp_no
+GROUP BY de.dept_no
+ORDER BY de.dept_no;
+
+--drop table current_emp_dept;
+
+SELECT  de.dept_no, COUNT(ce.emp_no) as Emp_count
+INTO current_emp_dept
+FROM current_emp as ce
+LEFT JOIN dept_emp as de
+ON ce.emp_no = de.emp_no
+GROUP BY de.dept_no
+ORDER BY de.dept_no;
+
+SELECT * FROM salaries;
+
+SELECT * FROM salaries
+ORDER BY to_date DESC;
+
+SELECT emp_no,
+    first_name,
+last_name,
+    gender
+INTO emp_info
+FROM employees
+WHERE (birth_date BETWEEN '1952-01-01' AND '1955-12-31')
+AND (hire_date BETWEEN '1985-01-01' AND '1988-12-31');
+
+--drop table emp_info;
+
+SELECT e.emp_no,
+    e.first_name,
+e.last_name,
+    e.gender,
+    s.salary,
+    de.to_date
+INTO emp_info
+FROM employees as e
+INNER JOIN salaries as s
+ON (e.emp_no = s.emp_no)
+INNER JOIN dept_emp as de
+ON (e.emp_no = de.emp_no)
+WHERE (e.birth_date BETWEEN '1952-01-01' AND '1955-12-31')
+     AND (e.hire_date BETWEEN '1985-01-01' AND '1988-12-31')
+
+Select * from emp_info;
+
+
+-- List of managers per department
+SELECT  dm.dept_no,
+        d.dept_name,
+        dm.emp_no,
+        ce.last_name,
+        ce.first_name,
+        dm.from_date,
+        dm.to_date
+INTO manager_info
+FROM dept_manager AS dm
+    INNER JOIN departments AS d
+        ON (dm.dept_no = d.dept_no)
+    INNER JOIN current_emp AS ce
+        ON (dm.emp_no = ce.emp_no);
+
+
+Select * from manager_info;
+
+SELECT ce.emp_no,
+ce.first_name,
+ce.last_name,
+d.dept_name
+FROM current_emp as ce
+INNER JOIN dept_emp AS de
+ON (ce.emp_no = de.emp_no)
+INNER JOIN departments AS d
+ON (de.dept_no = d.dept_no);
+
+Select * from departments;
+
+
+SELECT ce.emp_no,
+ce.first_name,
+ce.last_name,
+d.dept_name
+FROM retirement_info as ce
+INNER JOIN dept_emp AS de
+ON (ce.emp_no = de.emp_no)
+INNER JOIN departments AS d
+ON (de.dept_no = d.dept_no)
+Where dept_name in( 'Sales','Development');
+
+
+
+Select * from departments; 
+ 74  
+README.md
+@@ -0,0 +1,74 @@
+# Pewlett-Hackard-Analysis
+For learning SQLs from Module 7
+## Project Overview
+Pewlett-Hackward needs to determine the number of retiring employees per title, and identify employees who are eligible to participate in a mentorship program. Then write a report that summarizes your analysis and helps prepare manager for the "silver tsunami" as many current employees reach retirement age.
+
+## Resources
+- PostgreSQL 14, PgAdmin 4
+- data for tables from employees.csv, departments.csv,dept_emp.csv,dept_manager.csv,titles.csv,salaries.csv
+
+## Challenge Overview
+Prerequisite:
+1.  Download the Employee_Challenge_starter_code.sql file 
+
+
+
+## Deliverable 1:  The Number of Retiring Employees by Title
+
+Follow the instructions below to complete Deliverable 1.
+
+1.	Retrieve the emp_no, first_name, and last_name columns from the Employees table.
+2.	Retrieve the title, from_date, and to_date columns from the Titles table.
+3.	Create a new table using the INTO clause.
+4.	Join both tables on the primary key.
+5.	Filter the data on the birth_date column to retrieve the employees who were born between 1952 and 1955. Then, order by the employee number.
+6.	Export the Retirement Titles table from the previous step as retirement_titles.csv and save it to your Data folder in the Pewlett-Hackard-Analysis folder.
+
+Note: There are duplicate entries for some employees because they have switched titles over the years. Use the following instructions to remove these duplicates and keep only the most recent title of each employee.
+
+7.	Copy the query from the Employee_Challenge_starter_code.sql and add it to your Employee_Database_challenge.sql file.
+8.	Retrieve the employee number, first and last name, and title columns from the Retirement Titles table.
+9.	These columns will be in the new table that will hold the most recent title of each employee.
+10.	Use the DISTINCT ON statement to retrieve the first occurrence of the employee number for each set of rows defined by the ON () clause.
+11.	Create a Unique Titles table using the INTO clause.
+12.	Sort the Unique Titles table in ascending order by the employee number and descending order by the last date (i.e., to_date) of the most recent title.
+13.	Export the Unique Titles table as unique_titles.csv and save it to your Data folder in the Pewlett-Hackard-Analysis folder.
+14. Write another query in the Employee_Database_challenge.sql file to retrieve the number of employees by their most recent job title who are about to retire.
+15. First, retrieve the number of titles from the Unique Titles table.
+16. Then, create a Retiring Titles table to hold the required information.
+17. Group the table by title, then sort the count column in descending order.
+18.	Export the Retiring Titles table as retiring_titles.csv and save it to your Data folder in the Pewlett-Hackard-Analysis folder.
+
+## Deliverable 2: The Employees Eligible for the Mentorship Program
+
+Follow the instructions below to complete Deliverable 2.
+
+1.	Retrieve the emp_no, first_name, last_name, and birth_date columns from the Employees table.
+2.	Retrieve the from_date and to_date columns from the Department Employee table.
+3.	Retrieve the title column from the Titles table.
+4.	Use a DISTINCT ON statement to retrieve the first occurrence of the employee number for each set of rows defined by the ON () clause.
+5.	Create a new table using the INTO clause.
+6.	Join the Employees and the Department Employee tables on the primary key.
+7.	Join the Employees and the Titles tables on the primary key.
+8.	Filter the data on the to_date column to all the current employees, then filter the data on the birth_date columns to get all the employees whose birth dates are between January 1, 1965 and December 31, 1965.
+9.	Order the table by the employee number.
+10.	Export the Mentorship Eligibility table as mentorship_eligibilty.csv and save it to your Data folder in the Pewlett-Hackard-Analysis folder.
+
+## Pewlett-Hackard-Analysis Results
+
+- Image of retirement_titles
+    ![image_name](https://github.com/raneymjohnGit/World_Weather_Analysis/blob/main/Weather_Database/city_dataframe.png)
+
+- Image of unique_titles
+    ![image_name](https://github.com/raneymjohnGit/World_Weather_Analysis/blob/main/Vacation_Search/WeatherPy_vacation_map.png)
+
+- Image of retiring_titles
+    ![image_name](https://github.com/raneymjohnGit/World_Weather_Analysis/blob/main/Vacation_Itinerary/WeatherPy_travel_map.png)
+
+- Image of mentorship_eligibilty
+    ![image_name](https://github.com/raneymjohnGit/World_Weather_Analysis/blob/main/Vacation_Itinerary/WeatherPy_travel_map_markers.png)
+
+## Pewlett-Hackard-Analysis Summary
+
+1.  There are 1549 employees eligible for mentorship
+2.  Most number of employees retiring from titles Senior Engonner and Senior Staff 
+ BIN +44.5 KB 
+Resources/mentorship_eligibilty.png
+
+ BIN +42.5 KB 
+Resources/retirement_titles.png
